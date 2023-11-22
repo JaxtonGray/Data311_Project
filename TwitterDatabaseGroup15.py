@@ -9,58 +9,66 @@ def sql (database):
     # Create a cursor object to interact with the database
     cursor = conn.cursor()
 
-    # Create a table for user profiles
+    # Create User Profiles table
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS user_profiles (
-    user_id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    full_name TEXT,
-    email TEXT,
-    profile_image TEXT,
-    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    CREATE TABLE IF NOT EXISTS UserProfiles (
+    UserID INTEGER PRIMARY KEY,
+    Username TEXT UNIQUE NOT NULL,
+    Password TEXT NOT NULL,
+    FullName TEXT,
+    Email TEXT,
+    ProfileImage TEXT,
+    RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     ''')
 
-    # Create a table for tweets
+# Create Tweets table
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS tweets (
-    tweet_id INTEGER PRIMARY KEY,
-    user_id INTEGER FOREIGN KEY,
-    tweet_content TEXT NOT NULL,
-    creation_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    ''')
-    
-    # Create a table for followers_or_following
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS followers_or_following (
-    follow_id INTEGER PRIMARY KEY,
-    follower_user_id INTEGER FOREIGN KEY,
-    following_user_id INTEGER FOREIGN KEY
+    CREATE TABLE IF NOT EXISTS Tweets (
+    TweetID INTEGER PRIMARY KEY,
+    UserID INTEGER,
+    TweetContent TEXT,
+    CreationTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID)
     )
     ''')
 
-    # Create a table for likes_or_retweets
+# Create Followers/Following table
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS likes_or_retweets (
-    like_or_retweet_id INTEGER PRIMARY KEY,
-    user_id INTEGER FOREIGN KEY,
-    tweet_id INTEGER FOREIGN KEY,
+    CREATE TABLE IF NOT EXISTS FollowersFollowing (
+    FollowID INTEGER PRIMARY KEY,
+    FollowerUserID INTEGER,
+    FollowingUserID INTEGER,
+    FOREIGN KEY (FollowerUserID) REFERENCES UserProfiles(UserID),
+    FOREIGN KEY (FollowingUserID) REFERENCES UserProfiles(UserID)
     )
     ''')
 
-    # Create a table for comments
+# Create Likes/Retweets table
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS comments (
-    comment_id INTEGER PRIMARY KEY,
-    user_id INTEGER FOREIGN KEY,
-    tweet_id INTEGER FOREIGN KEY,
-    comment_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    CREATE TABLE IF NOT EXISTS LikesRetweets (
+    LikeRetweetID INTEGER PRIMARY KEY,
+    UserID INTEGER,
+    TweetID INTEGER,
+    FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID),
+    FOREIGN KEY (TweetID) REFERENCES Tweets(TweetID)
     )
     ''')
 
-    # Commit the changes and close the connection
+# Create Comments table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Comments (
+    CommentID INTEGER PRIMARY KEY,
+    UserID INTEGER,
+    TweetID INTEGER,
+    CommentText TEXT,
+    CommentTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID),
+    FOREIGN KEY (TweetID) REFERENCES Tweets(TweetID)
+    )
+    ''')
+
+# Commit changes and close connection
     conn.commit()
     conn.close()
 
