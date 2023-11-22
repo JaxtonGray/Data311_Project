@@ -4,74 +4,74 @@
 import sqlite3
 #Test
 
-def sql (database):
-    # Create a new SQLite database (or connect to an existing one)
-    conn = sqlite3.connect("twitter_like.db")
-    # Create a cursor object to interact with the database
-    cursor = conn.cursor()
 
-    # Create User Profiles table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS UserProfiles (
-    UserID INTEGER PRIMARY KEY,
-    Username TEXT UNIQUE NOT NULL,
-    Password TEXT NOT NULL,
-    FullName TEXT,
-    Email TEXT,
-    ProfileImage TEXT,
-    RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    ''')
+# Create a new SQLite database (or connect to an existing one)
+conn = sqlite3.connect("twitter_like.db")
+# Create a cursor object to interact with the database
+cursor = conn.cursor()
+
+# Create User Profiles table
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS UserProfiles (
+UserID INTEGER PRIMARY KEY,
+Username TEXT UNIQUE NOT NULL,
+Password TEXT NOT NULL,
+FullName TEXT,
+Email TEXT,
+ProfileImage TEXT,
+RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+''')
 
 # Create Tweets table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Tweets (
-    TweetID INTEGER PRIMARY KEY,
-    UserID INTEGER,
-    TweetContent TEXT,
-    CreationTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID)
-    )
-    ''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Tweets (
+TweetID INTEGER PRIMARY KEY,
+UserID INTEGER,
+TweetContent TEXT,
+CreationTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID)
+)
+''')
 
 # Create Followers/Following table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS FollowersFollowing (
-    FollowID INTEGER PRIMARY KEY,
-    FollowerUserID INTEGER,
-    FollowingUserID INTEGER,
-    FOREIGN KEY (FollowerUserID) REFERENCES UserProfiles(UserID),
-    FOREIGN KEY (FollowingUserID) REFERENCES UserProfiles(UserID)
-    )
-    ''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS FollowersFollowing (
+FollowID INTEGER PRIMARY KEY,
+FollowerUserID INTEGER,
+FollowingUserID INTEGER,
+FOREIGN KEY (FollowerUserID) REFERENCES UserProfiles(UserID),
+FOREIGN KEY (FollowingUserID) REFERENCES UserProfiles(UserID)
+)
+''')
 
 # Create Likes/Retweets table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS LikesRetweets (
-    LikeRetweetID INTEGER PRIMARY KEY,
-    UserID INTEGER,
-    TweetID INTEGER,
-    FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID),
-    FOREIGN KEY (TweetID) REFERENCES Tweets(TweetID)
-    )
-    ''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS LikesRetweets (
+LikeRetweetID INTEGER PRIMARY KEY,
+UserID INTEGER,
+TweetID INTEGER,
+FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID),
+FOREIGN KEY (TweetID) REFERENCES Tweets(TweetID)
+)
+''')
 
 # Create Comments table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Comments (
-    CommentID INTEGER PRIMARY KEY,
-    UserID INTEGER,
-    TweetID INTEGER,
-    CommentText TEXT,
-    CommentTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID),
-    FOREIGN KEY (TweetID) REFERENCES Tweets(TweetID)
-    )
-    ''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Comments (
+CommentID INTEGER PRIMARY KEY,
+UserID INTEGER,
+TweetID INTEGER,
+CommentText TEXT,
+CommentTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (UserID) REFERENCES UserProfiles(UserID),
+FOREIGN KEY (TweetID) REFERENCES Tweets(TweetID)
+)
+''')
 
 # Commit changes and close connection
-    conn.commit()
-    conn.close()
+conn.commit()
+conn.close()
 
 
 # User Registration and Login # Jax
@@ -79,7 +79,23 @@ def sql (database):
 # Posting New Tweets # Samin
 # Viewing User's Timeline # Samin
 # Liking tweets # Anthony
+def like_tweet(user_id,tweet_id):
+    try:
+        # See if user has already liked tweet
+        cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id,tweet_id))
+        existing_like = cursor.fetchone()
+
+        if existing_like:
+            print("You've already liked this tweet.")
+        else:
+            cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID)", (user_id,tweet_id))
+            conn.commit()
+            print("You have successfully liked the tweet.")
+    except sqlite3.Error as like_tweet_error:
+        print("Errpr occured while liking tweet",like_tweet_error)
+        
 # Showing the number of Likes of Tweets # Anthony
+    
 # Comments on Tweets # Samin
 # Following and Unfollowing Users # Jax
 
