@@ -74,16 +74,16 @@ def sql (database):
     conn.close()
 
 
-# User Registration and Login
+# User Registration and Login # Jax
 
-# Posting New Tweets
-# Viewing User's Timeline
-# Liking tweets
-# Showing the number of Likes of Tweets
-# Comments on Tweets
-# Following and Unfollowing Users 
+# Posting New Tweets # Samin
+# Viewing User's Timeline # Samin
+# Liking tweets # Anthony
+# Showing the number of Likes of Tweets # Anthony
+# Comments on Tweets # Samin
+# Following and Unfollowing Users # Jax
 
-# CLI Menu
+# CLI Menu # Anthony
 def CLI_Menu (choice):
     while True:
         print("Twitter-Like CLI Application")
@@ -118,5 +118,5 @@ def CLI_Menu (choice):
             break
         else:
             print("Invalid choice. Please select a valid option.")
-# Help feature and Documentation
+# Help feature and Documentation # Jax
             
