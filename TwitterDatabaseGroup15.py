@@ -75,7 +75,17 @@ def sql (database):
 
 
 # User Registration and Login # Jax
+def user_registration():
+    # Greet new user and ask for user information
+    username = input("Username: ")
+    password = input("Password: ") ###NOTE: Figure out password hashing????
 
+    # Check to see if username already exists within database, if so then ask for a new one
+    
+    # Add user into database with the given inputs
+    
+def user_login():
+    pass
 # Posting New Tweets # Samin
 # Viewing User's Timeline # Samin
 # Liking tweets # Anthony
@@ -84,7 +94,7 @@ def sql (database):
 # Following and Unfollowing Users # Jax
 
 # CLI Menu # Anthony
-def CLI_Menu (choice):
+def CLI_Menu(choice):
     while True:
         print("Twitter-Like CLI Application")
         print("1. Post a Tweet")
@@ -119,4 +129,5 @@ def CLI_Menu (choice):
         else:
             print("Invalid choice. Please select a valid option.")
 # Help feature and Documentation # Jax
-            
+
+user_registration()
