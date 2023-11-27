@@ -1,8 +1,6 @@
 # Reference code: https://www.sqlitetutorial.net/sqlite-python/creating-tables/
 
-# this is a test
 import sqlite3
-#Test
 
 def sql (database):
     # Create a new SQLite database (or connect to an existing one)
@@ -76,11 +74,27 @@ def sql (database):
 
 # User Registration and Login # Jax
 def user_registration():
-    # Greet new user and ask for user information
+    # Connect to the database
+    con = sqlite3.connect("twitter_like.db")
+    cur = con.cursor()
+
+    # Greet new user and ask for user registrationn information
     username = input("Username: ")
     password = input("Password: ") ###NOTE: Figure out password hashing????
 
     # Check to see if username already exists within database, if so then ask for a new one
+    userCheck = True # Flag for if username is taken
+    while userCheck:
+        cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
+        if cur.fetchone() is not None:
+            print("Username already exists, please try again.")
+            username = input("Username: ")
+        else:
+            userCheck = False
+
+    # Ask for user's full name and email
+    fullname = input("Full Name: ")
+    email = input("Email: ")
     
     # Add user into database with the given inputs
     
