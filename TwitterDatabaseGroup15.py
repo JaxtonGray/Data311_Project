@@ -92,12 +92,23 @@ def user_registration():
         else:
             userCheck = False
 
-    # Ask for user's full name and email
+    # Ask for user's full name and email and proifle image link
     fullname = input("Full Name: ")
     email = input("Email: ")
-    
-    # Add user into database with the given inputs
-    
+    profileImage = input("Profile Image Link: ")
+
+    # Generate a unique user ID
+    cur.execute("SELECT MAX(UserID) FROM UserProfiles") # Get the highest UserID
+    userID = cur.fetchone()[0] # Fetch the highest UserID
+    if userID is None: # If there are no users in the database
+        userID = 1 # Set the UserID to 1
+    else:
+        userID += 1 # Otherwise, increment the UserID by 1 to generate new highest UserID
+
+    # Insert user information into the database
+    cur.execute("""
+                INSERT INTO UserProfiles (UserID, Username, Password, FullName, Email, ProfileImage) VALUES (?, ?, ?, ?, ?, ?)
+                """, (userID, username, password, fullname, email, profileImage))
 def user_login():
     pass
 # Posting New Tweets # Samin
