@@ -111,9 +111,9 @@ def user_registration():
     con.commit() # Commit changes to the database
     con.close() # Close connection to the database
 
-def user_login(database):
+def user_login():
     # Connect to the database
-    con = sqlite3.connect(database)
+    con = sqlite3.connect("twitter_like.db")
     cur = con.cursor()
 
     # Query for login info username and password
@@ -146,6 +146,7 @@ def user_login(database):
     con.close()
 
     return userID
+
 # Posting New Tweets # Samin
 # Viewing User's Timeline # Samin
 # Liking tweets # Anthony
