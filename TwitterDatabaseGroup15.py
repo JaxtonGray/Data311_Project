@@ -2,7 +2,7 @@
 
 import sqlite3
 
-def sql (database):
+def sql(database):
     # Create a new SQLite database (or connect to an existing one)
     conn = sqlite3.connect("twitter_like.db")
     # Create a cursor object to interact with the database
@@ -86,11 +86,11 @@ def user_registration():
     userCheck = True # Flag for if username is taken
     while userCheck:
         cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
-        if cur.fetchone() is not None:
-            print("Username already exists, please try again.")
+        if cur.fetchone() is None: # If the username does not exist in the database
+            userCheck = False # Set flag to false to exit loop
+        else: # Otherwise, the username exists in the database
+            print("Username already exists. Please select a different username.")
             username = input("Username: ")
-        else:
-            userCheck = False
 
     # Ask for user's full name and email and proifle image link
     fullname = input("Full Name: ")
@@ -109,6 +109,8 @@ def user_registration():
     cur.execute("""
                 INSERT INTO UserProfiles (UserID, Username, Password, FullName, Email, ProfileImage) VALUES (?, ?, ?, ?, ?, ?)
                 """, (userID, username, password, fullname, email, profileImage))
+    con.commit() # Commit changes to the database
+    con.close() # Close connection to the database
 def user_login():
     pass
 # Posting New Tweets # Samin
@@ -154,5 +156,3 @@ def CLI_Menu(choice):
         else:
             print("Invalid choice. Please select a valid option.")
 # Help feature and Documentation # Jax
-
-user_registration()
