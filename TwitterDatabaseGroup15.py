@@ -4,7 +4,7 @@ import sqlite3
 
 def sql(database):
     # Create a new SQLite database (or connect to an existing one)
-    conn = sqlite3.connect("twitter_like.db")
+    conn = sqlite3.connect(database)
     # Create a cursor object to interact with the database
     cursor = conn.cursor()
 
@@ -111,8 +111,42 @@ def user_registration():
                 """, (userID, username, password, fullname, email, profileImage))
     con.commit() # Commit changes to the database
     con.close() # Close connection to the database
-def user_login():
-    pass
+
+def user_login(database):
+    # Connect to the database
+    con = sqlite3.connect(database)
+    cur = con.cursor()
+
+    # Query for login info username and password
+    username = input("Username: ")
+    password = input("Password: ")
+
+    # Check to see if username exists and if not return an error
+    cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
+    userCheck = True # Flag for if username is taken
+    while userCheck:
+        if cur.fetchone() is None: # If the username does not exist in the database
+            print("Username does not exist. Please try again.")
+            username = input("Username: ")
+        else: # Otherwise, the username exists in the database
+            userCheck = False
+    # Check that password works and if not try again... maybe for a limited attempt
+    cur.execute("SELECT Password FROM UserProfiles WHERE Username = ?", (username,))
+    passCheck = True # Flag for if password is correct
+    while passCheck:
+        if cur.fetchone()[0] != password: # If the password does not match the username
+            print("Password is incorrect. Please try again.")
+            password = input("Password: ")
+        else: # Otherwise, the password matches the username
+            passCheck = False
+    # If all good then return something like the userID to be used in other functions
+    cur.execute("SELECT UserID FROM UserProfiles WHERE Username = ?", (username,))
+    userID = cur.fetchone()[0]
+
+    # Close connection to the database
+    con.close()
+
+    return userID
 # Posting New Tweets # Samin
 # Viewing User's Timeline # Samin
 # Liking tweets # Anthony
