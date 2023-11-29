@@ -97,6 +97,14 @@ def like_tweet(user_id,tweet_id):
 # Showing the number of Likes of Tweets # Anthony
     
 # Comments on Tweets # Samin
+def post_comment(user_id, tweet_id, comment_text):
+    try:
+        cursor.execute("INSERT INTO Comments (UserID, TweetID, CommentText) VALUES (?, ?, ?)", (user_id, tweet_id, comment_text))
+        conn.commit()
+        print("Comment posted successfully.")
+    except sqlite3.Error as comment_post_error:
+        print("Error occurred while posting comment:", comment_post_error)
+
 # Following and Unfollowing Users # Jax
 
 # CLI Menu # Anthony
