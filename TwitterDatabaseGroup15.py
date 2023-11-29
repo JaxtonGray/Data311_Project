@@ -78,43 +78,27 @@ conn.close()
 
 # Posting New Tweets # Samin
 # Viewing User's Timeline # Samin
-# Liking tweets # Anthony
-def like_tweet():
-    tweet_id = input("Enter the Tweet ID you want to like: ")
 
+# Liking tweets and showing the number of Likes of Tweets # Anthony
+def like_tweet(user_id, tweet_id):
     # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
-    # Check if the tweet exists
-    cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
-    tweet = cursor.fetchone()
+    # Check if the user has already liked the tweet
+    cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
+    existing_like = cursor.fetchone()
 
-    if tweet:
-        # Check if the user already liked the tweet
-        user_id = 1  # Replace this with the actual user ID (change this for when authentication and login is created)
-        cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
-        already_liked = cursor.fetchone()
-
-        if already_liked:
-            print("You have already liked this tweet.")
-        else:
-            # Like the tweet
-            cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
-            conn.commit()
-            print("Tweet liked successfully.")
-
-        # Get the count of likes for the tweet
-        cursor.execute("SELECT COUNT(*) FROM LikesRetweets WHERE TweetID = ?", (tweet_id,))
-        like_count = cursor.fetchone()[0]
-        print(f"This tweet has {like_count} likes.")
+    if existing_like:
+        print("You have already liked this tweet.")
     else:
-        print("Tweet not found.")
+        # Insert a new record into the LikesRetweets table
+        cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
+        conn.commit()
+        print("You have liked the tweet successfully.")
 
     # Close the connection
     conn.close()
-        
-# Showing the number of Likes of Tweets # Anthony
     
 # Comments on Tweets # Samin
 # Following and Unfollowing Users # Jax
@@ -139,7 +123,9 @@ def CLI_Menu (choice):
             pass
         elif choice == '3':
         # Handle liking a tweet
-            like_tweet()
+            user_id = 1 # replace with actual user id
+            tweet_id = 1 # replace with tweet id
+            like_tweet(user_id,tweet_id) # if "3" is chosen, call the like_tweet function
         elif choice == '4':
         # Handle viewing tweet comments
             pass
