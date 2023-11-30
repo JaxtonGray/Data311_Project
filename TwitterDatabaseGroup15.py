@@ -118,6 +118,7 @@ def like_tweet(user_id, tweet_id):
 
 # Show number of likes on Tweet # Anthony
 def display_tweet_likes (tweet_id):
+    # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
@@ -167,7 +168,7 @@ def CLI_Menu (choice):
         print("2. View Timeline")
         print("3. Like a Tweet")
         print("4, View Tweet Likes")
-        print("5. View Tweet Comments")
+        print("5. View Tweet Comments") # Added view likes option
         print("6. Follow a User")
         print("7. Unfollow a User")
         print("8. Exit")
@@ -185,8 +186,8 @@ def CLI_Menu (choice):
             like_tweet(user_id,tweet_id) # if "3" is chosen, call the like_tweet function
         elif choice == '4':
         # Handle showing number of likes of tweet
-            tweet_id = 1
-            display_tweet_likes(tweet_id)
+            tweet_id = 1 # replace with tweet id
+            display_tweet_likes(tweet_id) # if "4" is chosen, call the display_tweet_likes function
         elif choice == '5':
         # Handle viewing tweet comments
             pass
