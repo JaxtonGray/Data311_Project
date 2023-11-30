@@ -148,26 +148,86 @@ def user_login():
     return userID
 
 # Posting New Tweets # Samin
-# Viewing User's Timeline # Samin
-# Liking tweets # Anthony
-def like_tweet(user_id,tweet_id):
-    try:
-        # See if user has already liked tweet
-        cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id,tweet_id))
-        existing_like = cursor.fetchone()
+def post_tweet(user_id, tweet_content):
+    # Validation for tweet content
+    if not tweet_content:
+        print("Tweet content cannot be empty.")
+        return
+    if len(tweet_content) > 280:  # Twitter's character limit
+        print("Tweet exceeds the maximum character limit of 280.")
+        return
 
-        if existing_like:
-            print("You've already liked this tweet.")
-        else:
-            cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID)", (user_id,tweet_id))
-            conn.commit()
-            print("You have successfully liked the tweet.")
-    except sqlite3.Error as like_tweet_error:
-        print("Errpr occured while liking tweet",like_tweet_error)
-        
-# Showing the number of Likes of Tweets # Anthony
+    try:
+        cursor.execute("INSERT INTO Tweets (UserID, TweetContent) VALUES (?, ?)", (user_id, tweet_content))
+        conn.commit()
+        print("Tweet posted successfully.")
+    except sqlite3.Error as tweet_post_error:
+        print("Error occurred while posting the tweet:", tweet_post_error)
+
+# Viewing User's Timeline # Samin
+
+# Liking tweets # Anthony
+def like_tweet(user_id, tweet_id):
+    # Connect to the database
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
+
+    # Check if the user has already liked the tweet
+    cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
+    existing_like = cursor.fetchone()
+
+    if existing_like:
+        print("You have already liked this tweet.")
+    else:
+        # Insert a new record into the LikesRetweets table
+        cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
+        conn.commit()
+        print("You have liked the tweet successfully.")
+
+    # Close the connection
+    conn.close()
+
+# Show number of likes on Tweet # Anthony
+def display_tweet_likes (tweet_id):
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
+
+    # Retrieve user IDs who liked the specified tweet
+    cursor.execute("SELECT UserID FROM LikesRetweets WHERE TweetID = ?", (tweet_id,))
+    likes = cursor.fetchall()
+
+    if likes:
+        print(f"Likes for Tweet ID {tweet_id}:")
+        for like in likes:
+            print(f"User ID: {like[0]}")
+    else:
+        print("No likes found for this tweet.")
+
+    conn.close()
     
 # Comments on Tweets # Samin
+def post_comment(user_id, tweet_id, comment_text):
+    try:
+        cursor.execute("INSERT INTO Comments (UserID, TweetID, CommentText) VALUES (?, ?, ?)", (user_id, tweet_id, comment_text))
+        conn.commit()
+        print("Comment posted successfully.")
+    except sqlite3.Error as comment_post_error:
+        print("Error occurred while posting comment:", comment_post_error)
+
+#viewing comments on a tweet
+def view_comments(tweet_id):
+    try:
+        cursor.execute("SELECT UserProfiles.Username, Comments.CommentText FROM Comments JOIN UserProfiles ON Comments.UserID = UserProfiles.UserID WHERE TweetID = ?", (tweet_id,))
+        comments = cursor.fetchall()
+
+        if comments:
+            for comment in comments:
+                print(f"{comment[0]} commented: {comment[1]}")
+        else:
+            print("No comments on this tweet.")
+    except sqlite3.Error as view_comment_error:
+        print("Error occurred while fetching comments:", view_comment_error)
+
 # Following and Unfollowing Users # Jax
 
 # CLI Menu # Anthony
@@ -177,10 +237,11 @@ def CLI_Menu(choice):
         print("1. Post a Tweet")
         print("2. View Timeline")
         print("3. Like a Tweet")
-        print("4. View Tweet Comments")
-        print("5. Follow a User")
-        print("6. Unfollow a User")
-        print("7. Exit")
+        print("4, View Tweet Likes")
+        print("5. View Tweet Comments")
+        print("6. Follow a User")
+        print("7. Unfollow a User")
+        print("8. Exit")
         choice = input("Enter your choice: ")
         if choice == '1':
         # Handle posting a tweet
@@ -190,17 +251,23 @@ def CLI_Menu(choice):
             pass
         elif choice == '3':
         # Handle liking a tweet
-            pass
+            user_id = 1 # replace with actual user id
+            tweet_id = 1 # replace with tweet id
+            like_tweet(user_id,tweet_id) # if "3" is chosen, call the like_tweet function
         elif choice == '4':
+        # Handle showing number of likes of tweet
+            tweet_id = 1
+            display_tweet_likes(tweet_id)
+        elif choice == '5':
         # Handle viewing tweet comments
             pass
-        elif choice == '5':
+        elif choice == '6':
         # Handle following a user
             pass
-        elif choice == '6':
+        elif choice == '7':
         # Handle unfollowing a user
             pass
-        elif choice == '7':
+        elif choice == '8':
             print("Goodbye!")
             break
         else:
