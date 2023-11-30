@@ -1,7 +1,6 @@
 # Reference code: https://www.sqlitetutorial.net/sqlite-python/creating-tables/
 
 import sqlite3
-
 # Create a new SQLite database (or connect to an existing one)
 conn = sqlite3.connect("twitter_like.db")
 # Create a cursor object to interact with the database
@@ -116,33 +115,34 @@ def user_login():
     con = sqlite3.connect("twitter_like.db")
     cur = con.cursor()
 
-    # Query for login info username and password
+    # Ask user for username and password
     username = input("Username: ")
     password = input("Password: ")
 
-    # Check to see if username exists and if not return an error
-    cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
+    # Check to see if username matches, keep repeating until username matches
     userCheck = True # Flag for if username is taken
     while userCheck:
+        cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
         if cur.fetchone() is None: # If the username does not exist in the database
             print("Username does not exist. Please try again.")
             username = input("Username: ")
         else: # Otherwise, the username exists in the database
-            userCheck = False
-    # Check that password works and if not try again... maybe for a limited attempt
-    cur.execute("SELECT Password FROM UserProfiles WHERE Username = ?", (username,))
+            userCheck = False # Set flag to false to exit loop
+    
+    # Check to see if password matches, keep repeating until password matches
     passCheck = True # Flag for if password is correct
     while passCheck:
-        if cur.fetchone()[0] != password: # If the password does not match the username
+        cur.execute("SELECT Password FROM UserProfiles WHERE Username = ?", (username,))
+        if cur.fetchone()[0] != password:
             print("Password is incorrect. Please try again.")
             password = input("Password: ")
-        else: # Otherwise, the password matches the username
+        else:
             passCheck = False
-    # If all good then return something like the userID to be used in other functions
+    
+    # Get the UserID of the user
     cur.execute("SELECT UserID FROM UserProfiles WHERE Username = ?", (username,))
     userID = cur.fetchone()[0]
 
-    # Close connection to the database
     con.close()
 
     return userID
