@@ -95,7 +95,7 @@ def post_tweet(user_id, tweet_content):
 
 # Viewing User's Timeline # Samin
 
-# Liking tweets and showing the number of Likes of Tweets # Anthony
+# Liking tweets # Anthony
 def like_tweet(user_id, tweet_id):
     # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
@@ -114,6 +114,24 @@ def like_tweet(user_id, tweet_id):
         print("You have liked the tweet successfully.")
 
     # Close the connection
+    conn.close()
+
+# Show number of likes on Tweet # Anthony
+def display_tweet_likes (tweet_id):
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
+
+    # Retrieve user IDs who liked the specified tweet
+    cursor.execute("SELECT UserID FROM LikesRetweets WHERE TweetID = ?", (tweet_id,))
+    likes = cursor.fetchall()
+
+    if likes:
+        print(f"Likes for Tweet ID {tweet_id}:")
+        for like in likes:
+            print(f"User ID: {like[0]}")
+    else:
+        print("No likes found for this tweet.")
+
     conn.close()
     
 # Comments on Tweets # Samin
@@ -148,10 +166,11 @@ def CLI_Menu (choice):
         print("1. Post a Tweet")
         print("2. View Timeline")
         print("3. Like a Tweet")
-        print("4. View Tweet Comments")
-        print("5. Follow a User")
-        print("6. Unfollow a User")
-        print("7. Exit")
+        print("4, View Tweet Likes")
+        print("5. View Tweet Comments")
+        print("6. Follow a User")
+        print("7. Unfollow a User")
+        print("8. Exit")
         choice = input("Enter your choice: ")
         if choice == '1':
         # Handle posting a tweet
@@ -165,15 +184,19 @@ def CLI_Menu (choice):
             tweet_id = 1 # replace with tweet id
             like_tweet(user_id,tweet_id) # if "3" is chosen, call the like_tweet function
         elif choice == '4':
+        # Handle showing number of likes of tweet
+            tweet_id = 1
+            display_tweet_likes(tweet_id)
+        elif choice == '5':
         # Handle viewing tweet comments
             pass
-        elif choice == '5':
+        elif choice == '6':
         # Handle following a user
             pass
-        elif choice == '6':
+        elif choice == '7':
         # Handle unfollowing a user
             pass
-        elif choice == '7':
+        elif choice == '8':
             print("Goodbye!")
             break
         else:
