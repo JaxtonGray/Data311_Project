@@ -77,6 +77,22 @@ conn.close()
 # User Registration and Login # Jax
 
 # Posting New Tweets # Samin
+def post_tweet(user_id, tweet_content):
+    # Validation for tweet content
+    if not tweet_content:
+        print("Tweet content cannot be empty.")
+        return
+    if len(tweet_content) > 280:  # Twitter's character limit
+        print("Tweet exceeds the maximum character limit of 280.")
+        return
+
+    try:
+        cursor.execute("INSERT INTO Tweets (UserID, TweetContent) VALUES (?, ?)", (user_id, tweet_content))
+        conn.commit()
+        print("Tweet posted successfully.")
+    except sqlite3.Error as tweet_post_error:
+        print("Error occurred while posting the tweet:", tweet_post_error)
+
 # Viewing User's Timeline # Samin
 # Liking tweets # Anthony
 def like_tweet(user_id,tweet_id):
@@ -104,6 +120,20 @@ def post_comment(user_id, tweet_id, comment_text):
         print("Comment posted successfully.")
     except sqlite3.Error as comment_post_error:
         print("Error occurred while posting comment:", comment_post_error)
+
+#viewing comments on a tweet
+def view_comments(tweet_id):
+    try:
+        cursor.execute("SELECT UserProfiles.Username, Comments.CommentText FROM Comments JOIN UserProfiles ON Comments.UserID = UserProfiles.UserID WHERE TweetID = ?", (tweet_id,))
+        comments = cursor.fetchall()
+
+        if comments:
+            for comment in comments:
+                print(f"{comment[0]} commented: {comment[1]}")
+        else:
+            print("No comments on this tweet.")
+    except sqlite3.Error as view_comment_error:
+        print("Error occurred while fetching comments:", view_comment_error)
 
 # Following and Unfollowing Users # Jax
 
