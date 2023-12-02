@@ -284,4 +284,3 @@ def CLI_Menu(choice):
         else:
             print("Invalid choice. Please select a valid option.")
 # Help feature and Documentation # Jax
-user_registration()
