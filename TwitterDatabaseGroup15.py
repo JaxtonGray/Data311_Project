@@ -1,10 +1,6 @@
 # Reference code: https://www.sqlitetutorial.net/sqlite-python/creating-tables/
 
-# this is a test
 import sqlite3
-#Test
-
-
 # Create a new SQLite database (or connect to an existing one)
 conn = sqlite3.connect("twitter_like.db")
 # Create a cursor object to interact with the database
@@ -75,6 +71,91 @@ conn.close()
 
 
 # User Registration and Login # Jax
+def user_registration():
+    # Connect to the database
+    con = sqlite3.connect("twitter_like.db")
+    cur = con.cursor()
+
+    # Greet new user and ask for user registrationn information
+    email = input("Email: ")
+    username = input("Username: ")
+    password = input("Password: ") ###NOTE: Figure out password hashing????
+
+    # Check to see if username already exists within database, if so then ask for a new one
+    userCheck = True # Flag for if username is taken
+    while userCheck:
+        cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
+        if cur.fetchone() is None: # If the username does not exist in the database
+            userCheck = False # Set flag to false to exit loop
+        else: # Otherwise, the username exists in the database
+            print("Username already exists. Please select a different username.")
+            username = input("Username: ")
+
+    # Check to see if email already exists within database, if so then ask for a new one
+    emailCheck = True # Flag for if email is taken
+    while emailCheck:
+        cur.execute("SELECT Email FROM UserProfiles WHERE Email = ?", (email,))
+        if cur.fetchone() is None:
+            emailCheck = False
+        else:
+            print("Email already exists. Please select a different email.")
+            email = input("Email: ")
+
+    # Ask for user's full name and proifle image link
+    fullname = input("Full Name: ")
+    profileImage = input("Profile Image Link: ")
+
+    # Generate a unique user ID
+    cur.execute("SELECT MAX(UserID) FROM UserProfiles") # Get the highest UserID
+    userID = cur.fetchone()[0] # Fetch the highest UserID
+    if userID is None: # If there are no users in the database
+        userID = 1 # Set the UserID to 1
+    else:
+        userID += 1 # Otherwise, increment the UserID by 1 to generate new highest UserID
+
+    # Insert user information into the database
+    cur.execute("""
+                INSERT INTO UserProfiles (UserID, Username, Password, FullName, Email, ProfileImage) VALUES (?, ?, ?, ?, ?, ?)
+                """, (userID, username, password, fullname, email, profileImage))
+    con.commit() # Commit changes to the database
+    con.close() # Close connection to the database
+
+def user_login():
+    # Connect to the database
+    con = sqlite3.connect("twitter_like.db")
+    cur = con.cursor()
+
+    # Ask user for username and password
+    username = input("Username: ")
+    password = input("Password: ")
+
+    # Check to see if username matches, keep repeating until username matches
+    userCheck = True # Flag for if username is taken
+    while userCheck:
+        cur.execute("SELECT Username FROM UserProfiles WHERE Username = ?", (username,))
+        if cur.fetchone() is None: # If the username does not exist in the database
+            print("Username does not exist. Please try again.")
+            username = input("Username: ")
+        else: # Otherwise, the username exists in the database
+            userCheck = False # Set flag to false to exit loop
+    
+    # Check to see if password matches, keep repeating until password matches
+    passCheck = True # Flag for if password is correct
+    while passCheck:
+        cur.execute("SELECT Password FROM UserProfiles WHERE Username = ?", (username,))
+        if cur.fetchone()[0] != password:
+            print("Password is incorrect. Please try again.")
+            password = input("Password: ")
+        else:
+            passCheck = False
+    
+    # Get the UserID of the user
+    cur.execute("SELECT UserID FROM UserProfiles WHERE Username = ?", (username,))
+    userID = cur.fetchone()[0]
+
+    con.close()
+
+    return userID
 
 # Posting New Tweets # Samin
 def post_tweet(user_id, tweet_content):
@@ -161,7 +242,7 @@ def view_comments(tweet_id):
 # Following and Unfollowing Users # Jax
 
 # CLI Menu # Anthony
-def CLI_Menu (choice):
+def CLI_Menu(choice):
     while True:
         print("Twitter-Like CLI Application")
         print("1. Post a Tweet")
@@ -203,4 +284,4 @@ def CLI_Menu (choice):
         else:
             print("Invalid choice. Please select a valid option.")
 # Help feature and Documentation # Jax
-            
+user_registration()
