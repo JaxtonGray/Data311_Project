@@ -77,6 +77,7 @@ def user_registration():
     cur = con.cursor()
 
     # Greet new user and ask for user registrationn information
+    email = input("Email: ")
     username = input("Username: ")
     password = input("Password: ") ###NOTE: Figure out password hashing????
 
@@ -90,9 +91,18 @@ def user_registration():
             print("Username already exists. Please select a different username.")
             username = input("Username: ")
 
-    # Ask for user's full name and email and proifle image link
+    # Check to see if email already exists within database, if so then ask for a new one
+    emailCheck = True # Flag for if email is taken
+    while emailCheck:
+        cur.execute("SELECT Email FROM UserProfiles WHERE Email = ?", (email,))
+        if cur.fetchone() is None:
+            emailCheck = False
+        else:
+            print("Email already exists. Please select a different email.")
+            email = input("Email: ")
+
+    # Ask for user's full name and proifle image link
     fullname = input("Full Name: ")
-    email = input("Email: ")
     profileImage = input("Profile Image Link: ")
 
     # Generate a unique user ID
@@ -273,3 +283,4 @@ def CLI_Menu(choice):
         else:
             print("Invalid choice. Please select a valid option.")
 # Help feature and Documentation # Jax
+user_registration()
