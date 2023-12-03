@@ -175,6 +175,25 @@ def post_tweet(user_id, tweet_content):
         print("Error occurred while posting the tweet:", tweet_post_error)
 
 # Viewing User's Timeline # Samin
+def view_timeline(user_id):
+    # Connect to the database
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
+
+    # Get the list of users that the current user follows
+    cursor.execute("SELECT FollowingUserID FROM FollowersFollowing WHERE FollowerUserID = ?", (user_id,))
+    following_users = cursor.fetchall()
+
+    # Display the tweets from the users the current user follows
+    for following_user_id in following_users:
+        # Retrieve tweets for the following user in reverse chronological order
+        cursor.execute("SELECT TweetContent, CreationTimestamp FROM Tweets WHERE UserID = ? ORDER BY CreationTimestamp DESC", (following_user_id,))
+        tweets = cursor.fetchall()
+
+        # Display the tweets for the following user
+        print(f"Timeline for User {following_user_id}:")
+        for tweet in tweets:
+            print(f"{tweet[1]}: {tweet[0]}")
 
 # Liking tweets # Anthony
 def like_tweet(user_id, tweet_id):
