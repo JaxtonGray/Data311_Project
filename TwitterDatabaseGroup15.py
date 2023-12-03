@@ -174,6 +174,9 @@ def post_tweet(user_id, tweet_content):
     except sqlite3.Error as tweet_post_error:
         print("Error occurred while posting the tweet:", tweet_post_error)
 
+    # Close the database connection
+    conn.close()
+
 # Viewing User's Timeline # Samin
 def view_timeline(user_id):
     # Connect to the database
@@ -194,6 +197,9 @@ def view_timeline(user_id):
         print(f"Timeline for User {following_user_id}:")
         for tweet in tweets:
             print(f"{tweet[1]}: {tweet[0]}")
+            
+        # Close the database connection
+    conn.close()
 
 # Liking tweets # Anthony
 def like_tweet(user_id, tweet_id):
@@ -257,6 +263,9 @@ def view_comments(tweet_id):
             print("No comments on this tweet.")
     except sqlite3.Error as view_comment_error:
         print("Error occurred while fetching comments:", view_comment_error)
+
+    # Close the database connection
+    conn.close()
 
 # Following and Unfollowing Users # Jax
 
