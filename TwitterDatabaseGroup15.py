@@ -298,7 +298,7 @@ def CLI_Menu():
         print("2. Register")
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice == '1': ### Potential bug: If user enters invalid username/password, they will still get to access the menu
             logged_in_user = user_login()
             isLogged_in = True
         else:
