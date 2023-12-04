@@ -295,7 +295,7 @@ def CLI_Menu():
     # Log in or register loop
     isLogged_in = False
     while not isLogged_in:
-        print("Twitter-Like CLI Application")
+        print("\nTwitter-Like CLI Application")
         print("1. Log In")
         print("2. Register")
         choice = input("Enter your choice: ")
@@ -303,8 +303,10 @@ def CLI_Menu():
         if choice == '1': ### Potential bug: If user enters invalid username/password, they will still get to access the menu
             logged_in_user = user_login()
             isLogged_in = True
-        else:
+        elif choice == '2':
             user_registration()
+        else:
+            print("Invalid choice. Please select a valid option.")
 
 
     while True:
