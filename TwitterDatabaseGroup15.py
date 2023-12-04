@@ -228,7 +228,7 @@ def like_tweet(user_id, tweet_id):
     conn.close()
 
 # Show number of likes on Tweet # Anthony
-def display_tweet_likes (tweet_id):
+def display_tweet_likes(tweet_id):
     # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
@@ -307,7 +307,7 @@ def CLI_Menu():
     # Log in or register loop
     isLogged_in = False
     while not isLogged_in:
-        print("Twitter-Like CLI Application")
+        print("\nTwitter-Like CLI Application")
         print("1. Log In")
         print("2. Register")
         choice = input("Enter your choice: ")
@@ -320,7 +320,7 @@ def CLI_Menu():
 
 
     while True:
-        print("Twitter-Like CLI Application")
+        print("\nTwitter-Like CLI Application")
         print(f"Logged in as User ID: {logged_in_user} \n")
         print("1. Post a Tweet")
         print("2. View Timeline")
@@ -333,42 +333,36 @@ def CLI_Menu():
 
         choice = input("Enter your choice: ")
 
-        # Added log in as user
-        if choice == '0' and not logged_in_user: 
-            username = input("Enter your username: ")
-            password = input("Enter your password: ")
-            logged_in_user = user_login(username, password)
-
-        elif choice == '1' and logged_in_user:
+        if choice == '1':
         # Handle posting a tweet
             tweet_content = input("Enter your tweet: ")
             post_tweet(logged_in_user, tweet_content)
 
-        elif choice == '2' and logged_in_user:
+        elif choice == '2':
         # Handle viewing the timeline
             view_timeline(logged_in_user)
 
-        elif choice == '3' and logged_in_user:
+        elif choice == '3':
         # Handle liking a tweet
             tweet_id = input("Enter the Tweet ID to like: ")
-            like_tweet(tweet_id) 
+            like_tweet(logged_in_user, tweet_id) 
 
-        elif choice == '4' and logged_in_user:
+        elif choice == '4':
         # Handle showing number of likes of tweet
             tweet_id = input("Enter the Tweet ID to view likes: ")
             display_tweet_likes(tweet_id) 
 
-        elif choice == '5' and logged_in_user:
+        elif choice == '5':
         # Handle viewing tweet comments
             tweet_id = input("Enter the Tweet ID to view comments: ")
             view_comments(tweet_id)
 
-        elif choice == '6' and logged_in_user:
+        elif choice == '6':
         # Handle following a user
             target_user_id = input("Enter User ID to follow: ")
             follow_unfollow(logged_in_user, target_user_id, "follow")
 
-        elif choice == '7' and logged_in_user:
+        elif choice == '7':
         # Handle unfollowing a user
             target_user_id = input("Enter User ID to unfollow: ")
             follow_unfollow(logged_in_user, target_user_id, "unfollow")
