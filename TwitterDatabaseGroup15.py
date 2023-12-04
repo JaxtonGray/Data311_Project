@@ -239,6 +239,7 @@ def display_tweet_likes (tweet_id):
     else:
         print("No likes found for this tweet.")
 
+    # Close the connection
     conn.close()
     
 # Comments on Tweets # Samin
@@ -268,6 +269,24 @@ def view_comments(tweet_id):
     conn.close()
 
 # Following and Unfollowing Users # Jax
+def follow_unfollow(user_id, target_user_id, action):
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
+
+    if action == "follow":
+        cursor.execute("INSERT INTO FollowersFollowing (FollowerUserID, FollowingUserID) VALUES (?, ?)",
+                       (user_id, target_user_id))
+        conn.commit()
+        print("You have followed the user successfully.")
+
+    elif action == "unfollow":
+        cursor.execute("DELETE FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
+                       (user_id, target_user_id))
+        conn.commit()
+        print("You have unfollowed the user successfully.")
+
+    # Close the connection
+    conn.close()
 
 # CLI Menu # Anthony
 def CLI_Menu():
@@ -322,13 +341,13 @@ def CLI_Menu():
         elif choice == '6' and logged_in_user:
         # Handle following a user
             target_user_id = input("Enter User ID to follow: ")
-            print(target_user_id)
+            follow_unfollow(logged_in_user, target_user_id, "follow")
 
         elif choice == '7' and logged_in_user:
         # Handle unfollowing a user
             target_user_id = input("Enter User ID to unfollow: ")
-            print(target_user_id)
-            
+            follow_unfollow(logged_in_user, target_user_id, "unfollow")
+
         elif choice == '8':
             print("Goodbye!")
             break
