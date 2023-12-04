@@ -270,9 +270,14 @@ def view_comments(tweet_id):
 # Following and Unfollowing Users # Jax
 
 # CLI Menu # Anthony
-def CLI_Menu(choice):
+def CLI_Menu():
+    logged_in_user = None
     while True:
         print("Twitter-Like CLI Application")
+        if logged_in_user: # added condition to log in
+            print(f"Logged in as User ID: {logged_in_user}")
+        else:
+            print("0. Log In or Register")
         print("1. Post a Tweet")
         print("2. View Timeline")
         print("3. Like a Tweet")
@@ -281,34 +286,56 @@ def CLI_Menu(choice):
         print("6. Follow a User")
         print("7. Unfollow a User")
         print("8. Exit")
+
         choice = input("Enter your choice: ")
-        if choice == '1':
+
+        # Added log in as user
+        if choice == '0' and not logged_in_user: 
+            username = input("Enter your username: ")
+            password = input("Enter your password: ")
+            logged_in_user = user_login(username, password)
+
+        elif choice == '1' and logged_in_user:
         # Handle posting a tweet
-            pass
-        elif choice == '2':
+            tweet_content = input("Enter your tweet: ")
+            post_tweet(logged_in_user, tweet_content)
+
+        elif choice == '2' and logged_in_user:
         # Handle viewing the timeline
-            pass
-        elif choice == '3':
+            view_timeline(logged_in_user)
+
+        elif choice == '3' and logged_in_user:
         # Handle liking a tweet
-            user_id = 1 # replace with actual user id
-            tweet_id = 1 # replace with tweet id
-            like_tweet(user_id,tweet_id) # if "3" is chosen, call the like_tweet function
-        elif choice == '4':
+            tweet_id = input("Enter the Tweet ID to like: ")
+            like_tweet(tweet_id) 
+
+        elif choice == '4' and logged_in_user:
         # Handle showing number of likes of tweet
-            tweet_id = 1 # replace with tweet id
-            display_tweet_likes(tweet_id) # if "4" is chosen, call the display_tweet_likes function
-        elif choice == '5':
+            tweet_id = input("Enter the Tweet ID to view likes: ")
+            display_tweet_likes(tweet_id) 
+
+        elif choice == '5' and logged_in_user:
         # Handle viewing tweet comments
-            pass
-        elif choice == '6':
+            tweet_id = input("Enter the Tweet ID to view comments: ")
+            view_comments(tweet_id)
+
+        elif choice == '6' and logged_in_user:
         # Handle following a user
-            pass
-        elif choice == '7':
+            target_user_id = input("Enter User ID to follow: ")
+            print(target_user_id)
+
+        elif choice == '7' and logged_in_user:
         # Handle unfollowing a user
-            pass
+            target_user_id = input("Enter User ID to unfollow: ")
+            print(target_user_id)
+            
         elif choice == '8':
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Please select a valid option.")
 # Help feature and Documentation # Jax
+
+
+
+CLI_Menu()
