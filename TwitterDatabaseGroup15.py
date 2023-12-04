@@ -290,13 +290,24 @@ def follow_unfollow(user_id, target_user_id, action):
 
 # CLI Menu # Anthony
 def CLI_Menu():
-    logged_in_user = None
+    # Log in or register loop
+    isLogged_in = False
+    while not isLogged_in:
+        print("Twitter-Like CLI Application")
+        print("1. Log In")
+        print("2. Register")
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            logged_in_user = user_login()
+            isLogged_in = True
+        else:
+            user_registration()
+
+
     while True:
         print("Twitter-Like CLI Application")
-        if logged_in_user: # added condition to log in
-            print(f"Logged in as User ID: {logged_in_user}")
-        else:
-            print("0. Log In or Register")
+        print(f"Logged in as User ID: {logged_in_user} \n")
         print("1. Post a Tweet")
         print("2. View Timeline")
         print("3. Like a Tweet")
