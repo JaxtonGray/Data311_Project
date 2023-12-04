@@ -288,6 +288,8 @@ def follow_unfollow(user_id, target_user_id, action):
     # Close the connection
     conn.close()
 
+# Help feature and Documentation # Jax
+
 # CLI Menu # Anthony
 def CLI_Menu():
     # Log in or register loop
@@ -313,58 +315,57 @@ def CLI_Menu():
         print("3. Like a Tweet")
         print("4, View Tweet Likes")
         print("5. View Tweet Comments") # Added view likes option
-        print("6. Follow a User")
-        print("7. Unfollow a User")
-        print("8. Exit")
+        print("6. Post a Comment")
+        print("7. Follow a User")
+        print("8. Unfollow a User")
+        print("9. Help and Documentation")
+        print("10. Exit")
 
         choice = input("Enter your choice: ")
 
-        # Added log in as user
-        if choice == '0' and not logged_in_user: 
-            username = input("Enter your username: ")
-            password = input("Enter your password: ")
-            logged_in_user = user_login(username, password)
-
-        elif choice == '1' and logged_in_user:
+        if choice == '1':
         # Handle posting a tweet
             tweet_content = input("Enter your tweet: ")
             post_tweet(logged_in_user, tweet_content)
 
-        elif choice == '2' and logged_in_user:
+        elif choice == '2':
         # Handle viewing the timeline
             view_timeline(logged_in_user)
 
-        elif choice == '3' and logged_in_user:
+        elif choice == '3':
         # Handle liking a tweet
             tweet_id = input("Enter the Tweet ID to like: ")
             like_tweet(tweet_id) 
 
-        elif choice == '4' and logged_in_user:
+        elif choice == '4':
         # Handle showing number of likes of tweet
             tweet_id = input("Enter the Tweet ID to view likes: ")
             display_tweet_likes(tweet_id) 
 
-        elif choice == '5' and logged_in_user:
+        elif choice == '5':
         # Handle viewing tweet comments
             tweet_id = input("Enter the Tweet ID to view comments: ")
             view_comments(tweet_id)
-
-        elif choice == '6' and logged_in_user:
+        elif choice == '6':
+        # Handle posting a comment
+            tweet_id = input("Enter the Tweet ID to comment on: ")
+            comment_text = input("Enter your comment: ")
+            post_comment(logged_in_user, tweet_id, comment_text)    
+        elif choice == '8':
         # Handle following a user
             target_user_id = input("Enter User ID to follow: ")
             follow_unfollow(logged_in_user, target_user_id, "follow")
 
-        elif choice == '7' and logged_in_user:
+        elif choice == '9':
         # Handle unfollowing a user
             target_user_id = input("Enter User ID to unfollow: ")
             follow_unfollow(logged_in_user, target_user_id, "unfollow")
 
-        elif choice == '8':
+        elif choice == '10':
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Please select a valid option.")
-# Help feature and Documentation # Jax
 
 
 
