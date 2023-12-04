@@ -207,19 +207,24 @@ def like_tweet(user_id, tweet_id):
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
-    # Check if the user has already liked the tweet
+    cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
+    tweet_exists = cursor.fetchone()
+
+    if not tweet_exists:
+        print("Tweet not found. Please enter a valid Tweet ID.")
+        conn.close()
+        return
+
     cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
     existing_like = cursor.fetchone()
 
     if existing_like:
         print("You have already liked this tweet.")
     else:
-        # Insert a new record into the LikesRetweets table
         cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
         conn.commit()
         print("You have liked the tweet successfully.")
 
-    # Close the connection
     conn.close()
 
 # Show number of likes on Tweet # Anthony
@@ -228,18 +233,27 @@ def display_tweet_likes (tweet_id):
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
-    # Retrieve user IDs who liked the specified tweet
-    cursor.execute("SELECT UserID FROM LikesRetweets WHERE TweetID = ?", (tweet_id,))
+    cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
+    tweet_exists = cursor.fetchone()
+
+    if not tweet_exists:
+        print("Tweet not found. Please enter a valid Tweet ID.")
+        conn.close()
+        return
+
+    cursor.execute("SELECT UserProfiles.Username "
+                   "FROM LikesRetweets "
+                   "INNER JOIN UserProfiles ON LikesRetweets.UserID = UserProfiles.UserID "
+                   "WHERE LikesRetweets.TweetID = ?", (tweet_id,))
     likes = cursor.fetchall()
 
     if likes:
         print(f"Likes for Tweet ID {tweet_id}:")
         for like in likes:
-            print(f"User ID: {like[0]}")
+            print(f"User: {like[0]}")
     else:
         print("No likes found for this tweet.")
 
-    # Close the connection
     conn.close()
     
 # Comments on Tweets # Samin
@@ -288,25 +302,21 @@ def follow_unfollow(user_id, target_user_id, action):
     # Close the connection
     conn.close()
 
-# Help feature and Documentation # Jax
-
 # CLI Menu # Anthony
 def CLI_Menu():
     # Log in or register loop
     isLogged_in = False
     while not isLogged_in:
-        print("\nTwitter-Like CLI Application")
+        print("Twitter-Like CLI Application")
         print("1. Log In")
         print("2. Register")
         choice = input("Enter your choice: ")
 
-        if choice == '1': ### Potential bug: If user enters invalid username/password, they will still get to access the menu
+        if choice == '1':
             logged_in_user = user_login()
             isLogged_in = True
-        elif choice == '2':
-            user_registration()
         else:
-            print("Invalid choice. Please select a valid option.")
+            user_registration()
 
 
     while True:
@@ -317,57 +327,59 @@ def CLI_Menu():
         print("3. Like a Tweet")
         print("4, View Tweet Likes")
         print("5. View Tweet Comments") # Added view likes option
-        print("6. Post a Comment")
-        print("7. Follow a User")
-        print("8. Unfollow a User")
-        print("9. Help and Documentation")
-        print("10. Exit")
+        print("6. Follow a User")
+        print("7. Unfollow a User")
+        print("8. Exit")
 
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        # Added log in as user
+        if choice == '0' and not logged_in_user: 
+            username = input("Enter your username: ")
+            password = input("Enter your password: ")
+            logged_in_user = user_login(username, password)
+
+        elif choice == '1' and logged_in_user:
         # Handle posting a tweet
             tweet_content = input("Enter your tweet: ")
             post_tweet(logged_in_user, tweet_content)
 
-        elif choice == '2':
+        elif choice == '2' and logged_in_user:
         # Handle viewing the timeline
             view_timeline(logged_in_user)
 
-        elif choice == '3':
+        elif choice == '3' and logged_in_user:
         # Handle liking a tweet
             tweet_id = input("Enter the Tweet ID to like: ")
             like_tweet(tweet_id) 
 
-        elif choice == '4':
+        elif choice == '4' and logged_in_user:
         # Handle showing number of likes of tweet
             tweet_id = input("Enter the Tweet ID to view likes: ")
             display_tweet_likes(tweet_id) 
 
-        elif choice == '5':
+        elif choice == '5' and logged_in_user:
         # Handle viewing tweet comments
             tweet_id = input("Enter the Tweet ID to view comments: ")
             view_comments(tweet_id)
-        elif choice == '6':
-        # Handle posting a comment
-            tweet_id = input("Enter the Tweet ID to comment on: ")
-            comment_text = input("Enter your comment: ")
-            post_comment(logged_in_user, tweet_id, comment_text)    
-        elif choice == '8':
+
+        elif choice == '6' and logged_in_user:
         # Handle following a user
             target_user_id = input("Enter User ID to follow: ")
             follow_unfollow(logged_in_user, target_user_id, "follow")
 
-        elif choice == '9':
+        elif choice == '7' and logged_in_user:
         # Handle unfollowing a user
             target_user_id = input("Enter User ID to unfollow: ")
             follow_unfollow(logged_in_user, target_user_id, "unfollow")
 
-        elif choice == '10':
+        elif choice == '8':
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Please select a valid option.")
+
+# Help feature and Documentation # Jax
 
 
 
