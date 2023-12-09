@@ -399,7 +399,7 @@ def CLI_Menu():
         print("1. Post a Tweet")
         print("2. View Timeline")
         print("3. Like a Tweet")
-        print("4, View Tweet Likes")
+        print("4. View Tweet Likes")
         print("5. View Tweet Comments") # Added view likes option
         print("6. Follow a User")
         print("7. Unfollow a User")
