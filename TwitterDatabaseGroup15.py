@@ -291,9 +291,19 @@ def post_comment(user_id, tweet_id, comment_text):
     except sqlite3.Error as comment_post_error:
         print("Error occurred while posting comment:", comment_post_error)
 
-#viewing comments on a tweet
 def view_comments(tweet_id):
+    # Connect to the database
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
+
     try:
+        # Validate tweet_id
+        cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
+        if cursor.fetchone() is None:
+            print("The specified tweet does not exist.")
+            return
+
+        # Fetch comments
         cursor.execute("SELECT UserProfiles.Username, Comments.CommentText FROM Comments JOIN UserProfiles ON Comments.UserID = UserProfiles.UserID WHERE TweetID = ?", (tweet_id,))
         comments = cursor.fetchall()
 
@@ -304,9 +314,10 @@ def view_comments(tweet_id):
             print("No comments on this tweet.")
     except sqlite3.Error as view_comment_error:
         print("Error occurred while fetching comments:", view_comment_error)
+    finally:
+        # Close the database connection
+        conn.close()
 
-    # Close the database connection
-    conn.close()
 
 # Following and Unfollowing Users # Jax
 def follow_unfollow(logged_in_user, target_user_id, action):
