@@ -182,31 +182,32 @@ def post_tweet(user_id, tweet_content):
 
 def view_timeline(user_id):
     try:
-        # Connect to the database
         conn = sqlite3.connect("twitter_like.db")
         cursor = conn.cursor()
 
-        # Get the list of users that the current user follows
         cursor.execute("SELECT FollowingUserID FROM FollowersFollowing WHERE FollowerUserID = ?", (user_id,))
         following_users = cursor.fetchall()
 
-        print("Following Users:", following_users)  # Debug print
+        if not following_users:
+            print("You are not following any users, or no follow data found.")
+            return
 
-        # Display the tweets from the users the current user follows
+        print("Following User IDs:", [fu[0] for fu in following_users])  # Debug print
+
         for (following_user_id,) in following_users:
-            # Retrieve tweets for the following user in reverse chronological order
             cursor.execute("SELECT TweetContent, CreationTimestamp FROM Tweets WHERE UserID = ? ORDER BY CreationTimestamp DESC", (following_user_id,))
             tweets = cursor.fetchall()
 
-            print(f"Timeline for User {following_user_id}:")  # Debug print
-            for tweet in tweets:
-                print(f"{tweet[1]}: {tweet[0]}")
+            if tweets:
+                print(f"Timeline for User {following_user_id}:")
+                for tweet in tweets:
+                    print(f"{tweet[1]}: {tweet[0]}")
+            else:
+                print(f"No tweets found for User {following_user_id}")
 
     except sqlite3.Error as e:
         print(f"An error occurred: {e}")
-
     finally:
-        # Close the database connection
         conn.close()
 
 
