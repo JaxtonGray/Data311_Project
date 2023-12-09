@@ -212,7 +212,7 @@ def view_timeline(user_id):
 
 
 # Liking tweets # Anthony
-def like_tweet(user_id, tweet_id):
+def like_unlike_tweet(user_id, tweet_id):
     # Connect to database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
@@ -228,9 +228,16 @@ def like_tweet(user_id, tweet_id):
             existing_like = cursor.fetchone()
 
             if existing_like:
-                print("You have already liked this tweet.")
+                action = input("You have already liked this tweet. Do you want to unlike it? (Y/N): ")
+                if action.lower() == 'y':
+                    # Unlike the tweet
+                    cursor.execute("DELETE FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
+                    conn.commit()
+                    print("You have unliked the tweet.")
+                else:
+                    print("You've decided to keep the tweet liked.")
             else:
-                # Insert a new like for the tweet
+                # Like the tweet
                 cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
                 conn.commit()
                 print("You have liked the tweet successfully.")
@@ -244,7 +251,7 @@ def like_tweet(user_id, tweet_id):
             if retry.lower() != 'y':
                 conn.close()
                 break
-            tweet_id = input("Enter the Tweet ID to like: ")
+            tweet_id = input("Enter the Tweet ID: ")
 
 # Show number of likes on Tweet # Anthony
 def display_tweet_likes(tweet_id):
@@ -399,7 +406,7 @@ def CLI_Menu():
         print("1. Post a Tweet")
         print("2. View Timeline")
         print("3. Like a Tweet")
-        print("4, View Tweet Likes")
+        print("4. View Tweet Likes")
         print("5. View Tweet Comments") # Added view likes option
         print("6. Follow a User")
         print("7. Unfollow a User")
@@ -419,7 +426,7 @@ def CLI_Menu():
         elif choice == '3':
         # Handle liking a tweet
             tweet_id = input("Enter the Tweet ID to like: ")
-            like_tweet(logged_in_user, tweet_id) 
+            like_unlike_tweet(logged_in_user, tweet_id) 
 
         elif choice == '4':
         # Handle showing number of likes of tweet
