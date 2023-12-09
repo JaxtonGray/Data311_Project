@@ -303,7 +303,7 @@ def view_comments(tweet_id):
 
 # Following and Unfollowing Users # Jax
 def follow_unfollow(logged_in_user, target_user_id, action):
-    # Connect to database
+    # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
@@ -313,18 +313,39 @@ def follow_unfollow(logged_in_user, target_user_id, action):
         user_exists = cursor.fetchone()
 
         if user_exists:
-            if action == "follow":
-                # Follow the target user
-                cursor.execute("INSERT INTO FollowersFollowing (FollowerUserID, FollowingUserID) VALUES (?, ?)",
-                               (logged_in_user, target_user_id))
-                conn.commit()
-                print("You have followed the user successfully.")
-            elif action == "unfollow":
-                # Unfollow the target user
-                cursor.execute("DELETE FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
-                               (logged_in_user, target_user_id))
-                conn.commit()
-                print("You have unfollowed the user successfully.")
+            # Prevent users from following themselves
+            if logged_in_user == target_user_id and action == "follow":
+                print("Error: You cannot follow yourself.")
+            else:
+                if action == "follow":
+                    # Check if the user is already following the target user
+                    cursor.execute("SELECT * FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
+                                   (logged_in_user, target_user_id))
+                    already_following = cursor.fetchone()
+
+                    if already_following:
+                        print("You are already following this user.")
+                    else:
+                        # Follow the target user
+                        cursor.execute("INSERT INTO FollowersFollowing (FollowerUserID, FollowingUserID) VALUES (?, ?)",
+                                       (logged_in_user, target_user_id))
+                        conn.commit()
+                        print("You have followed the user successfully.")
+
+                elif action == "unfollow":
+                    # Check if the user is following the target user
+                    cursor.execute("SELECT * FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
+                                   (logged_in_user, target_user_id))
+                    already_following = cursor.fetchone()
+
+                    if already_following:
+                        # Unfollow the target user
+                        cursor.execute("DELETE FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
+                                       (logged_in_user, target_user_id))
+                        conn.commit()
+                        print("You have unfollowed the user successfully.")
+                    else:
+                        print("You are not following this user.")
 
             conn.close()
             break
@@ -335,7 +356,7 @@ def follow_unfollow(logged_in_user, target_user_id, action):
             if retry.lower() != 'y':
                 conn.close()
                 break
-            target_user_id = input("Enter the User ID to follow/unfollow: ")
+            target_user_id = input("Enter the User ID: ")
 
 # CLI Menu # Anthony
 def CLI_Menu():
