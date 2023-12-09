@@ -159,6 +159,9 @@ def user_login():
 
 # Posting New Tweets # Samin
 def post_tweet(user_id, tweet_content):
+    # Connect to database
+    conn = sqlite3.connect("twitter_like.db")
+    cursor = conn.cursor()
     # Validation for tweet content
     if not tweet_content:
         print("Tweet content cannot be empty.")
@@ -203,29 +206,38 @@ def view_timeline(user_id):
 
 # Liking tweets # Anthony
 def like_tweet(user_id, tweet_id):
-    # Connect to the database
+    # Connect to database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
-    tweet_exists = cursor.fetchone()
+    while True:
+        # Check if the tweet exists in the database
+        cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
+        tweet_exists = cursor.fetchone()
 
-    if not tweet_exists:
-        print("Tweet not found. Please enter a valid Tweet ID.")
-        conn.close()
-        return
+        if tweet_exists:
+            # Check if the user has already liked the tweet
+            cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
+            existing_like = cursor.fetchone()
 
-    cursor.execute("SELECT * FROM LikesRetweets WHERE UserID = ? AND TweetID = ?", (user_id, tweet_id))
-    existing_like = cursor.fetchone()
+            if existing_like:
+                print("You have already liked this tweet.")
+            else:
+                # Insert a new like for the tweet
+                cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
+                conn.commit()
+                print("You have liked the tweet successfully.")
 
-    if existing_like:
-        print("You have already liked this tweet.")
-    else:
-        cursor.execute("INSERT INTO LikesRetweets (UserID, TweetID) VALUES (?, ?)", (user_id, tweet_id))
-        conn.commit()
-        print("You have liked the tweet successfully.")
-
-    conn.close()
+            conn.close()
+            break
+        else:
+            # If the tweet ID does not exist, prompt the user to retry or exit
+            print("The tweet ID does not exist.")
+            retry = input("Would you like to retry? (Y/N): ")
+            if retry.lower() != 'y':
+                conn.close()
+                break
+            tweet_id = input("Enter the Tweet ID to like: ")
 
 # Show number of likes on Tweet # Anthony
 def display_tweet_likes(tweet_id):
@@ -233,28 +245,35 @@ def display_tweet_likes(tweet_id):
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
-    tweet_exists = cursor.fetchone()
+    while True:
+        # Check if the tweet exists in the database
+        cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
+        tweet_exists = cursor.fetchone()
 
-    if not tweet_exists:
-        print("Tweet not found. Please enter a valid Tweet ID.")
-        conn.close()
-        return
+        if tweet_exists:
+            # Fetch and display likes for the tweet
+            cursor.execute("SELECT UserProfiles.Username FROM LikesRetweets "
+                           "INNER JOIN UserProfiles ON LikesRetweets.UserID = UserProfiles.UserID "
+                           "WHERE LikesRetweets.TweetID = ?", (tweet_id,))
+            likes = cursor.fetchall()
 
-    cursor.execute("SELECT UserProfiles.Username "
-                   "FROM LikesRetweets "
-                   "INNER JOIN UserProfiles ON LikesRetweets.UserID = UserProfiles.UserID "
-                   "WHERE LikesRetweets.TweetID = ?", (tweet_id,))
-    likes = cursor.fetchall()
+            if likes:
+                print(f"Likes for Tweet ID {tweet_id}:")
+                for like in likes:
+                    print(f"User: {like[0]}")
+            else:
+                print("No likes found for this tweet.")
 
-    if likes:
-        print(f"Likes for Tweet ID {tweet_id}:")
-        for like in likes:
-            print(f"User: {like[0]}")
-    else:
-        print("No likes found for this tweet.")
-
-    conn.close()
+            conn.close()
+            break
+        else:
+            # If the tweet ID does not exist, prompt the user to retry or exit
+            print("The tweet ID does not exist.")
+            retry = input("Would you like to retry? (Y/N): ")
+            if retry.lower() != 'y':
+                conn.close()
+                break
+            tweet_id = input("Enter the Tweet ID to view likes: ")
     
 # Comments on Tweets # Samin
 def post_comment(user_id, tweet_id, comment_text):
