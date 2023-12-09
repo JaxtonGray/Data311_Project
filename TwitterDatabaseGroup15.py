@@ -185,19 +185,14 @@ def view_timeline():
         conn = sqlite3.connect("twitter_like.db")
         cursor = conn.cursor()
 
-        # Modified query to join UserProfiles table to get the Username
-        cursor.execute("""
-            SELECT UserProfiles.Username, Tweets.UserID, Tweets.TweetID, Tweets.TweetContent, Tweets.CreationTimestamp 
-            FROM Tweets 
-            INNER JOIN UserProfiles ON Tweets.UserID = UserProfiles.UserID 
-            ORDER BY Tweets.CreationTimestamp DESC
-        """)
+        # Fetch all tweets from the database
+        cursor.execute("SELECT UserID, TweetID, TweetContent, CreationTimestamp FROM Tweets ORDER BY CreationTimestamp DESC")
         tweets = cursor.fetchall()
 
         if tweets:
             print("All Tweets in the Database:")
             for tweet in tweets:
-                print(f"Username: {tweet[0]}, UserID: {tweet[1]}, TweetID: {tweet[2]}, Date: {tweet[4]}\nTweet: {tweet[3]}\n")
+                print(f"UserID: {tweet[0]}, TweetID: {tweet[1]}, Date: {tweet[3]} \nTweet: {tweet[2]}\n")
         else:
             print("There are no tweets in the database.")
 
@@ -205,7 +200,6 @@ def view_timeline():
         print(f"An error occurred: {e}")
     finally:
         conn.close()
-
 
 
 # Liking tweets # Anthony
