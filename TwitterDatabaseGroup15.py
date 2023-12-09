@@ -302,24 +302,40 @@ def view_comments(tweet_id):
     conn.close()
 
 # Following and Unfollowing Users # Jax
-def follow_unfollow(user_id, target_user_id, action):
+def follow_unfollow(logged_in_user, target_user_id, action):
+    # Connect to database
     conn = sqlite3.connect("twitter_like.db")
     cursor = conn.cursor()
 
-    if action == "follow":
-        cursor.execute("INSERT INTO FollowersFollowing (FollowerUserID, FollowingUserID) VALUES (?, ?)",
-                       (user_id, target_user_id))
-        conn.commit()
-        print("You have followed the user successfully.")
+    while True:
+        # Check if the target user ID exists in the database
+        cursor.execute("SELECT * FROM UserProfiles WHERE UserID = ?", (target_user_id,))
+        user_exists = cursor.fetchone()
 
-    elif action == "unfollow":
-        cursor.execute("DELETE FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
-                       (user_id, target_user_id))
-        conn.commit()
-        print("You have unfollowed the user successfully.")
+        if user_exists:
+            if action == "follow":
+                # Follow the target user
+                cursor.execute("INSERT INTO FollowersFollowing (FollowerUserID, FollowingUserID) VALUES (?, ?)",
+                               (logged_in_user, target_user_id))
+                conn.commit()
+                print("You have followed the user successfully.")
+            elif action == "unfollow":
+                # Unfollow the target user
+                cursor.execute("DELETE FROM FollowersFollowing WHERE FollowerUserID = ? AND FollowingUserID = ?",
+                               (logged_in_user, target_user_id))
+                conn.commit()
+                print("You have unfollowed the user successfully.")
 
-    # Close the connection
-    conn.close()
+            conn.close()
+            break
+        else:
+            # If the target user ID does not exist, prompt the user to retry or exit
+            print("Invalid user ID. The user does not exist.")
+            retry = input("Would you like to retry? (Y/N): ")
+            if retry.lower() != 'y':
+                conn.close()
+                break
+            target_user_id = input("Enter the User ID to follow/unfollow: ")
 
 # CLI Menu # Anthony
 def CLI_Menu():
