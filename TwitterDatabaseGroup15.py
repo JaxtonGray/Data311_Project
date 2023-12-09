@@ -180,35 +180,32 @@ def post_tweet(user_id, tweet_content):
     # Close the database connection
     conn.close()
 
-def view_timeline(user_id):
+def view_timeline():
     try:
         conn = sqlite3.connect("twitter_like.db")
         cursor = conn.cursor()
 
-        cursor.execute("SELECT FollowingUserID FROM FollowersFollowing WHERE FollowerUserID = ?", (user_id,))
-        following_users = cursor.fetchall()
+        # Modified query to join UserProfiles table to get the Username
+        cursor.execute("""
+            SELECT UserProfiles.Username, Tweets.UserID, Tweets.TweetID, Tweets.TweetContent, Tweets.CreationTimestamp 
+            FROM Tweets 
+            INNER JOIN UserProfiles ON Tweets.UserID = UserProfiles.UserID 
+            ORDER BY Tweets.CreationTimestamp DESC
+        """)
+        tweets = cursor.fetchall()
 
-        if not following_users:
-            print("You are not following any users, or no follow data found.")
-            return
-
-        print("Following User IDs:", [fu[0] for fu in following_users])  # Debug print
-
-        for (following_user_id,) in following_users:
-            cursor.execute("SELECT TweetContent, CreationTimestamp FROM Tweets WHERE UserID = ? ORDER BY CreationTimestamp DESC", (following_user_id,))
-            tweets = cursor.fetchall()
-
-            if tweets:
-                print(f"Timeline for User {following_user_id}:")
-                for tweet in tweets:
-                    print(f"{tweet[1]}: {tweet[0]}")
-            else:
-                print(f"No tweets found for User {following_user_id}")
+        if tweets:
+            print("All Tweets in the Database:")
+            for tweet in tweets:
+                print(f"Username: {tweet[0]}, UserID: {tweet[1]}, TweetID: {tweet[2]}, Date: {tweet[4]}\nTweet: {tweet[3]}\n")
+        else:
+            print("There are no tweets in the database.")
 
     except sqlite3.Error as e:
         print(f"An error occurred: {e}")
     finally:
         conn.close()
+
 
 
 # Liking tweets # Anthony
@@ -246,6 +243,7 @@ def like_tweet(user_id, tweet_id):
                 break
             tweet_id = input("Enter the Tweet ID to like: ")
 
+
 # Show number of likes on Tweet # Anthony
 def display_tweet_likes(tweet_id):
     # Connect to the database
@@ -281,6 +279,7 @@ def display_tweet_likes(tweet_id):
                 conn.close()
                 break
             tweet_id = input("Enter the Tweet ID to view likes: ")
+            
     
 # Comments on Tweets # Samin
 def post_comment(user_id, tweet_id, comment_text):
@@ -414,7 +413,7 @@ def CLI_Menu():
 
         elif choice == '2':
         # Handle viewing the timeline
-            view_timeline(logged_in_user)
+            view_timeline() # Updated to match the new function defined.
 
         elif choice == '3':
         # Handle liking a tweet
