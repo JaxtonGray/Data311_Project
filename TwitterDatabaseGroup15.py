@@ -531,7 +531,7 @@ def CLI_Menu():
         elif choice == '6':
              tweet_id = input("Enter the Tweet ID to comment on: ")
              comment_text = input("Enter your comment: ")
-            post_comment(logged_in_user, tweet_id, comment_text)
+             post_comment(logged_in_user, tweet_id, comment_text)
 
         
         elif choice == '7':
