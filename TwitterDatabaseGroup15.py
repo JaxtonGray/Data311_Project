@@ -256,16 +256,22 @@ def display_tweet_likes(tweet_id):
         tweet_exists = cursor.fetchone()
 
         if tweet_exists:
-            # Fetch and display likes for the tweet
+            # Fetch tweet content
+            cursor.execute("SELECT TweetContent FROM Tweets WHERE TweetID = ?", (tweet_id,))
+            tweet_content = cursor.fetchone()[0]
+
+            # Fetch and display likes for the tweet along with the content
             cursor.execute("SELECT UserProfiles.Username FROM LikesRetweets "
                            "INNER JOIN UserProfiles ON LikesRetweets.UserID = UserProfiles.UserID "
                            "WHERE LikesRetweets.TweetID = ?", (tweet_id,))
             likes = cursor.fetchall()
 
             if likes:
-                print(f"Likes for Tweet ID {tweet_id}:")
+                print(f"Tweet Content (Tweet ID {tweet_id}):")
+                print(f"{tweet_content}")  # Display tweet content
+                print("\nLikes for this tweet:")
                 for like in likes:
-                    print(f"User: {like[0]}")
+                    print(f"User: {like[0]}")  # Display users who liked the tweet
             else:
                 print("No likes found for this tweet.")
 
