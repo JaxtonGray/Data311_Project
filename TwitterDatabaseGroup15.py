@@ -180,6 +180,7 @@ def post_tweet(user_id, tweet_content):
     # Close the database connection
     conn.close()
 
+# View timeline # Samin
 def view_timeline():
     try:
         conn = sqlite3.connect("twitter_like.db")
@@ -200,7 +201,6 @@ def view_timeline():
         print(f"An error occurred: {e}")
     finally:
         conn.close()
-
 
 # Liking tweets # Anthony
 def like_unlike_tweet(user_id, tweet_id):
@@ -244,7 +244,6 @@ def like_unlike_tweet(user_id, tweet_id):
                 break
             tweet_id = input("Enter the Tweet ID: ")
 
-
 # Show number of likes on Tweet # Anthony
 def display_tweet_likes(tweet_id):
     # Connect to the database
@@ -281,7 +280,7 @@ def display_tweet_likes(tweet_id):
                 break
             tweet_id = input("Enter the Tweet ID to view likes: ")
             
-    
+# Post Comment # Samin
 def post_comment(user_id, tweet_id, comment_text):
     # Check if the comment text is not empty
     if not comment_text.strip():
@@ -311,6 +310,7 @@ def post_comment(user_id, tweet_id, comment_text):
         # Close the connection
         conn.close()
 
+# View Comment # Samin
 def view_comments(tweet_id):
     # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
@@ -338,8 +338,7 @@ def view_comments(tweet_id):
         # Close the database connection
         conn.close()
 
-
-# Following and Unfollowing Users # Jax
+# Following and Unfollowing Users # Anthony
 def follow_unfollow(logged_in_user, target_user_id, action):
     # Connect to the database
     conn = sqlite3.connect("twitter_like.db")
@@ -396,7 +395,6 @@ def follow_unfollow(logged_in_user, target_user_id, action):
                 break
             target_user_id = input("Enter the User ID: ")
 
-
 # Help feature and Documentation # Jax
 def helpFunction():
     # This function will explain how the other functions work
@@ -433,6 +431,7 @@ def helpFunction():
             print("To use this function, simply enter the number 3 when prompted for a function to use.")
             print("You will be prompted to enter the Tweet ID of the tweet you wish to like.")
             print("Once you have entered the Tweet ID, the tweet will be liked.")
+            print("If you selected a Tweet ID that you have already liked, you will be prompted to unlike the tweet.")
             print("You will then be returned to the main menu.\n")
         elif choice == '4': # View Tweet Likes
             print("The View Tweet Likes function allows you to view all users who have liked a tweet.")
@@ -470,8 +469,7 @@ def helpFunction():
         else:
             print("Invalid choice. Please select a valid option.")
 
-
-# CLI Menu # Anthony
+# CLI Menu # Jax
 def CLI_Menu():
     # Log in or register loop
     isLogged_in = False
@@ -486,7 +484,6 @@ def CLI_Menu():
             isLogged_in = True
         else:
             user_registration()
-
 
     while True:
         print("\nTwitter-Like CLI Application")
@@ -533,7 +530,6 @@ def CLI_Menu():
              comment_text = input("Enter your comment: ")
              post_comment(logged_in_user, tweet_id, comment_text)
 
-        
         elif choice == '7':
         # Handle following a user
             target_user_id = input("Enter User ID to follow: ")
@@ -554,5 +550,5 @@ def CLI_Menu():
         else:
             print("Invalid choice. Please select a valid option.")
 
-
+# Run Program
 CLI_Menu()
