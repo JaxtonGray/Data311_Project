@@ -376,6 +376,81 @@ def follow_unfollow(logged_in_user, target_user_id, action):
                 break
             target_user_id = input("Enter the User ID: ")
 
+
+# Help feature and Documentation # Jax
+def helpFunction():
+    # This function will explain how the other functions work
+    print("Welcome to the Help and Documentation section of the Twitter-Like CLI Application.")
+    print("This application is designed to mimic the functionality of Twitter, but in a command line interface.")
+    print("The following functions are available to you:")
+    print("1. Post a Tweet")
+    print("2. View Timeline")
+    print("3. Like a Tweet")
+    print("4. View Tweet Likes")
+    print("5. View Tweet Comments")
+    print("6. Post a Comment")
+    print("7. Follow a User")
+    print("8. Unfollow a User")
+    print("To use any of these functions, simply enter the number corresponding to the function you wish to use.\n")
+    print("To leave the Help and Documentation section, simply enter the number 9.")
+
+    while True:
+        choice = input("Choose a function you would like to learn more about: ")
+        
+        if choice == '1': # Post a Tweet
+            print("The Post a Tweet function allows you to post a tweet to the database.")
+            print("To use this function, simply enter the number 1 when prompted for a function to use.")
+            print("You will be prompted to enter the content of your tweet.")
+            print("Once you have entered your tweet, it will be posted to the database.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '2': # View Timeline
+            print("The View Timeline function allows you to view all tweets in the database.")
+            print("To use this function, simply enter the number 2 when prompted for a function to use.")
+            print("All tweets in the database will be displayed, along with the user who posted the tweet and the date it was posted.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '3': # Like a Tweet
+            print("The Like a Tweet function allows you to like a tweet in the database.")
+            print("To use this function, simply enter the number 3 when prompted for a function to use.")
+            print("You will be prompted to enter the Tweet ID of the tweet you wish to like.")
+            print("Once you have entered the Tweet ID, the tweet will be liked.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '4': # View Tweet Likes
+            print("The View Tweet Likes function allows you to view all users who have liked a tweet.")
+            print("To use this function, simply enter the number 4 when prompted for a function to use.")
+            print("You will be prompted to enter the Tweet ID of the tweet you wish to view likes for.")
+            print("Once you have entered the Tweet ID, all users who have liked the tweet will be displayed.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '5': # View Tweet Comments
+            print("The View Tweet Comments function allows you to view all comments on a tweet.")
+            print("To use this function, simply enter the number 5 when prompted for a function to use.")
+            print("You will be prompted to enter the Tweet ID of the tweet you wish to view comments for.")
+            print("Once you have entered the Tweet ID, all comments on the tweet will be displayed.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '6': # Post a Comment
+            print("The Post a Comment function allows you to post a comment on a tweet.")
+            print("To use this function, simply enter the number 6 when prompted for a function to use.")
+            print("You will be prompted to enter the Tweet ID of the tweet you wish to comment on.")
+            print("Once you have entered the Tweet ID, you will be prompted to enter the content of your comment.")
+            print("Once you have entered your comment, it will be posted to the database.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '7': # Follow a User
+            print("The Follow a User function allows you to follow another user.")
+            print("To use this function, simply enter the number 7 when prompted for a function to use.")
+            print("You will be prompted to enter the User ID of the user you wish to follow.")
+            print("Once you have entered the User ID, you will be following the user.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '8': # Unfollow a User
+            print("The Unfollow a User function allows you to unfollow another user.")
+            print("To use this function, simply enter the number 8 when prompted for a function to use.")
+            print("You will be prompted to enter the User ID of the user you wish to unfollow.")
+            print("Once you have entered the User ID, you will be unfollowing the user.")
+            print("You will then be returned to the main menu.\n")
+        elif choice == '9': # Exit
+            break
+        else:
+            print("Invalid choice. Please select a valid option.")
+
+
 # CLI Menu # Anthony
 def CLI_Menu():
     # Log in or register loop
@@ -401,9 +476,11 @@ def CLI_Menu():
         print("3. Like a Tweet")
         print("4. View Tweet Likes")
         print("5. View Tweet Comments") # Added view likes option
-        print("6. Follow a User")
-        print("7. Unfollow a User")
-        print("8. Exit")
+        print("6. Post a Comment")
+        print("7. Follow a User")
+        print("8. Unfollow a User")
+        print("9. Help and Documentation")
+        print("10. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -432,23 +509,30 @@ def CLI_Menu():
             view_comments(tweet_id)
 
         elif choice == '6':
+            # Handle posting a comment
+            tweet_id = input("Enter the Tweet ID to comment on: ")
+            comment_text = input("Enter your comment: ")
+            post_comment(logged_in_user, tweet_id, comment_text)
+        
+        elif choice == '7':
         # Handle following a user
             target_user_id = input("Enter User ID to follow: ")
             follow_unfollow(logged_in_user, target_user_id, "follow")
-
-        elif choice == '7':
+        
+        elif choice == '8':
         # Handle unfollowing a user
             target_user_id = input("Enter User ID to unfollow: ")
             follow_unfollow(logged_in_user, target_user_id, "unfollow")
 
-        elif choice == '8':
+        elif choice == '9':
+        # Handle help and documentation
+            helpFunction()
+
+        elif choice == '10':
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Please select a valid option.")
-
-# Help feature and Documentation # Jax
-
 
 
 CLI_Menu()
