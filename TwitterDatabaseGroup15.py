@@ -282,14 +282,34 @@ def display_tweet_likes(tweet_id):
             tweet_id = input("Enter the Tweet ID to view likes: ")
             
     
-# Comments on Tweets # Samin
 def post_comment(user_id, tweet_id, comment_text):
+    # Check if the comment text is not empty
+    if not comment_text.strip():
+        print("Comment content cannot be empty.")
+        return
+
     try:
+        # Open a new database connection inside the function
+        conn = sqlite3.connect("twitter_like.db")
+        cursor = conn.cursor()
+
+        # Check if the tweet exists
+        cursor.execute("SELECT * FROM Tweets WHERE TweetID = ?", (tweet_id,))
+        if not cursor.fetchone():
+            print("The specified tweet does not exist.")
+            return
+
+        # Insert the comment
         cursor.execute("INSERT INTO Comments (UserID, TweetID, CommentText) VALUES (?, ?, ?)", (user_id, tweet_id, comment_text))
         conn.commit()
         print("Comment posted successfully.")
-    except sqlite3.Error as comment_post_error:
-        print("Error occurred while posting comment:", comment_post_error)
+
+    except sqlite3.Error as e:
+        print("Error occurred while posting comment:", e)
+
+    finally:
+        # Close the connection
+        conn.close()
 
 def view_comments(tweet_id):
     # Connect to the database
@@ -509,10 +529,10 @@ def CLI_Menu():
             view_comments(tweet_id)
 
         elif choice == '6':
-            # Handle posting a comment
-            tweet_id = input("Enter the Tweet ID to comment on: ")
-            comment_text = input("Enter your comment: ")
+             tweet_id = input("Enter the Tweet ID to comment on: ")
+             comment_text = input("Enter your comment: ")
             post_comment(logged_in_user, tweet_id, comment_text)
+
         
         elif choice == '7':
         # Handle following a user
